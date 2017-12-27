@@ -1,1 +1,95 @@
 
+package com.*******.*********.LED;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/**
+ * Created by bysd-2 on 2017/12/6.
+ */
+
+public class GpioControl {
+
+    private static GpioControl control = null;
+
+
+    private static final String GPIO_MAIN = "/sys/class/newmobi_gpio/newmobi_gpio/Gpio";  //号    //20
+
+    private static final String GPIO_INOUT = "/sys/class/newmobi_gpio/newmobi_gpio/Gpio_inout"; // 0 / 1
+    private FileWriter fileWriter;
+
+
+    private GpioControl() {
+
+        try {
+            fileWriter = new FileWriter(GPIO_MAIN);
+            fileWriter.write("20");
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static GpioControl getInstance() {
+
+        if (control == null) {
+            control = new GpioControl();
+        }
+        return control;
+    }
+
+
+    public void openLED() throws Exception {
+
+//        fileWriter = new FileWriter(GPIO_MAIN);
+//        fileWriter.write("20");
+//        fileWriter.close();
+
+        fileWriter = new FileWriter(GPIO_INOUT);
+        fileWriter.write("01");
+        fileWriter.close();
+
+    }
+
+    public void closeLED() throws Exception {
+//        fileWriter = new FileWriter(GPIO_MAIN);
+//        fileWriter.write("20");
+//        fileWriter.close();
+
+        fileWriter = new FileWriter(GPIO_INOUT);
+        fileWriter.write("00");
+        fileWriter.close();
+    }
+
+
+    /**
+     * 亮灯true
+     * 熄灯false
+     *
+     * @return
+     * @throws Exception
+     */
+    public Boolean checkState() throws Exception {
+
+        FileReader Red_fr = new FileReader(GPIO_INOUT);
+        BufferedReader Red_br = new BufferedReader(Red_fr);
+
+        String state = Red_br.readLine();
+
+        Red_fr.close();
+        Red_br.close();
+
+        if (state.equals("0")) {
+            return false;
+        } else if (state.equals("1")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+}
